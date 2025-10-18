@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "426712808275",
+    "project_id": "thro---app",
+    "storage_bucket": "thro---app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426712808275:android:49da04b4fd04b8566e3fa6",
+        "android_client_info": {
+          "package_name": "com.thro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA63pes1kZADRaonmFoqUUKR6ACP_8V0dA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

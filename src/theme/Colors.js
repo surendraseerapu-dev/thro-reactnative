@@ -1,0 +1,10 @@
+export const black = '#000';
+export const red = '#FF6620';
+export const green = '#008000';
+export const white = '#fff';
+export const grey = '#808080';
+export const lightGrey = '#F2F2F2';
+export const primaryColor = '#9827b5';
+export const transparent = 'rgba(52, 52, 52, 0.0)';
+export const headingColor = '#4D4C4C';
+export const subHeadingColor = '#060606';
