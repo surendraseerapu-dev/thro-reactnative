@@ -22,7 +22,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {FilledButton} from '../components/FilledButton';
 import EyeIcon from '../assets/svgs/EyeIcon'; // You need to import your eye icon here
 import EyeOffIcon from '../assets/svgs/EyeOffIcon'; // You need to import your eye-off icon here
-
+import { LoginButton, AccessToken, GraphRequest, GraphRequestManager, Settings } from 'react-native-fbsdk-next';
 export default SignIn = () => {
   const [mobileNo, setMobileNo] = useState('');
   const [password, setPassword] = useState('');
@@ -185,6 +185,59 @@ export default SignIn = () => {
           </View>
         </View>
       )}
+           <View style={{
+                  flex: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+       <LoginButton
+    onLoginFinished={
+      (error, result) => {
+        if (error) {
+          alert("login has error: " + result.error);
+        } else if (result.isCancelled) {
+          alert("login is cancelled.");
+        } else {
+
+          AccessToken.getCurrentAccessToken().then(
+            (data) => {
+              let accessToken = data.accessToken
+              alert(accessToken.toString())
+
+              const responseInfoCallback = (error, result) => {
+                if (error) {
+                  console.log(error)
+                  alert('Error fetching data: ' + error.toString());
+                } else {
+                  console.log(result)
+                  alert('Success fetching data: ' + JSON.stringify(result));
+                }
+              }
+
+              const infoRequest = new GraphRequest(
+                '/me',
+                {
+                  accessToken: accessToken,
+                  parameters: {
+                    fields: {
+                      string: 'email,name,first_name,middle_name,last_name'
+                    }
+                  }
+                },
+                responseInfoCallback
+              );
+
+              // Start the graph request.
+              new GraphRequestManager().addRequest(infoRequest).start()
+
+            }
+          )
+
+        }
+      }
+    }
+    onLogoutFinished={() => alert("logout.")}/>
+    </View>
     </KeyboardAvoidingView>
   );
 };
