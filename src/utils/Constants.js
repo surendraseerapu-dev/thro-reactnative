@@ -65,3 +65,7 @@ export const THRO_USER_ACTION = '/throEvents/userAction'; //
 export const THRO_CREATOR_ACTION = '/throEvents/creatorAction'; //
 
 export const GET_PROFILE = '/user/profile';
+
+export const GOOGLE_SIGN_IN_WEB_CLIENT_ID = "815001829271-dl7ugkitf8uk2t95m0urn2hnkgmpmpj6.apps.googleusercontent.com";
+export const GOOGLE_SIGN_IN_IOS_CLIENT_ID = "815001829271-lc26t0mk631klf48876t76241au2isni.apps.googleusercontent.com";
+export const GOOGLE_SIGN_IN_ANDROID_CLIENT_ID = "815001829271-1o0o4q180aioskkt1u2m2c9aou706v4b.apps.googleusercontent.com";  
