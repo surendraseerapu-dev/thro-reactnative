@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   KeyboardAvoidingView,
   SafeAreaView,
@@ -7,22 +7,45 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {black, grey, headingColor, primaryColor, white} from '../theme/Colors';
-import {useNavigation} from '@react-navigation/native';
-import {ErrorMessage} from '../utils/FlashMessage';
+import { black, grey, headingColor, primaryColor, white } from '../theme/Colors';
+import { useNavigation } from '@react-navigation/native';
+import { ErrorMessage } from '../utils/FlashMessage';
 import {
   SEND_OTP_FOR_LOGIN,
   ROUTE_VERIFY_OTP,
   ROUTE_JOIN_US,
+  GOOGLE_SIGN_IN_WEB_CLIENT_ID,
+  GOOGLE_SIGN_IN_IOS_CLIENT_ID
 } from '../utils/Constants';
-import {InputField} from '../components/InputField';
-import {apiCall} from '../utils/apicall';
+import { InputField } from '../components/InputField';
+import { apiCall } from '../utils/apicall';
 import ActivityIndicatorComponent from '../utils/ActivityIndicator';
 import LinearGradient from 'react-native-linear-gradient';
-import {FilledButton} from '../components/FilledButton';
+import { FilledButton } from '../components/FilledButton';
 import EyeIcon from '../assets/svgs/EyeIcon'; // You need to import your eye icon here
 import EyeOffIcon from '../assets/svgs/EyeOffIcon'; // You need to import your eye-off icon here
-import { LoginButton, AccessToken, GraphRequest, GraphRequestManager, Settings } from 'react-native-fbsdk-next';
+
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+// ...existing code...
+import { FacebookSignin } from '../components/fedareted_sigin/FacebookSignin';
+import { GoogleSignIn } from '../components/fedareted_sigin/GoogleSignIn';
+
+// ...existing code...
+GoogleSignin.configure({
+  webClientId: GOOGLE_SIGN_IN_WEB_CLIENT_ID, // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+  scopes: [
+    /* what APIs you want to access on behalf of the user, default is email and profile
+    this is just an example, most likely you don't need this option at all! */
+    'https://www.googleapis.com/auth/drive.readonly',
+  ],
+  forceCodeForRefreshToken: false, // [Android] related to `serverAuthCode`, read the docs link below *.
+  iosClientId: GOOGLE_SIGN_IN_IOS_CLIENT_ID // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+});
+
 export default SignIn = () => {
   const [mobileNo, setMobileNo] = useState('');
   const [password, setPassword] = useState('');
@@ -68,7 +91,7 @@ export default SignIn = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={{height: '100%', marginHorizontal: 30}}>
+    <KeyboardAvoidingView style={{ height: '100%', marginHorizontal: 30 }}>
       <ActivityIndicatorComponent visible={loading} text="Signing In..." />
       <Text
         style={{
@@ -93,7 +116,7 @@ export default SignIn = () => {
       </Text>
 
       <InputField
-        style={{marginTop: '30%'}}
+        style={{ marginTop: '30%' }}
         heading="Mobile No"
         value={mobileNo}
         maxLength={10}
@@ -103,7 +126,7 @@ export default SignIn = () => {
         onChangeText={setMobileNo}
       />
 
-      <View style={{marginTop: 15}}>
+      <View style={{ marginTop: 15 }}>
         <Text
           style={{
             fontSize: 15,
@@ -120,7 +143,7 @@ export default SignIn = () => {
             borderBottomColor: grey,
           }}>
           <TextInput
-            style={{flex: 1, paddingVertical: 10, fontSize: 16}}
+            style={{ flex: 1, paddingVertical: 10, fontSize: 16 }}
             value={password}
             maxLength={16}
             secureTextEntry={!showPassword} // Toggle password visibility
@@ -149,7 +172,7 @@ export default SignIn = () => {
       </Text>
 
       {!focus && (
-        <View style={{width: '100%', position: 'absolute', bottom: '5%'}}>
+        <View style={{ width: '100%', marginTop: 20 }}>
           <FilledButton lable={'Log In'} onPress={validateSignIn} />
 
           <View
@@ -185,59 +208,23 @@ export default SignIn = () => {
           </View>
         </View>
       )}
-           <View style={{
-                  flex: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-       <LoginButton
-    onLoginFinished={
-      (error, result) => {
-        if (error) {
-          alert("login has error: " + result.error);
-        } else if (result.isCancelled) {
-          alert("login is cancelled.");
-        } else {
 
-          AccessToken.getCurrentAccessToken().then(
-            (data) => {
-              let accessToken = data.accessToken
-              alert(accessToken.toString())
+      <View style={{ width: '100%', position: 'absolute', bottom: '5%', alignItems: 'center' }}>
+        {/* Both child views share the same width and are centered */}
+        <View style={{ width: '90%'}}>
+          <FacebookSignin />
+        </View>
 
-              const responseInfoCallback = (error, result) => {
-                if (error) {
-                  console.log(error)
-                  alert('Error fetching data: ' + error.toString());
-                } else {
-                  console.log(result)
-                  alert('Success fetching data: ' + JSON.stringify(result));
-                }
-              }
-
-              const infoRequest = new GraphRequest(
-                '/me',
-                {
-                  accessToken: accessToken,
-                  parameters: {
-                    fields: {
-                      string: 'email,name,first_name,middle_name,last_name'
-                    }
-                  }
-                },
-                responseInfoCallback
-              );
-
-              // Start the graph request.
-              new GraphRequestManager().addRequest(infoRequest).start()
-
-            }
-          )
-
-        }
-      }
-    }
-    onLogoutFinished={() => alert("logout.")}/>
-    </View>
+        <View style={{ width: '100%', marginTop: 10, alignItems: 'center'}}>
+          <GoogleSigninButton
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={() => GoogleSignIn()}
+            disabled={false}
+          />
+        </View>
+      </View>
+      
     </KeyboardAvoidingView>
   );
 };
