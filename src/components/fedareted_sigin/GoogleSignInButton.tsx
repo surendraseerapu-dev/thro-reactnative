@@ -1,11 +1,20 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 import {
   GoogleSignin,
+  isErrorWithCode,
+  isSuccessResponse,
+  statusCodes,
+  User,
 } from '@react-native-google-signin/google-signin';
-import { GOOGLE_SIGN_IN_IOS_CLIENT_ID, GOOGLE_SIGN_IN_WEB_CLIENT_ID } from "../../utils/Constants";
-import { GoogleSignIn } from "./GoogleSignIn";
+import { GOOGLE_SIGN_IN_IOS_CLIENT_ID, GOOGLE_SIGN_IN_WEB_CLIENT_ID, ROUTE_BOTTOM_NAVIGATION_HOST, SESSION_TOKEN, SOCIAL_LOGIN } from "../../utils/Constants";
 import GoogleIcon from "../../assets/svgs/GoogleIcon";
+import { ErrorMessage } from "../../utils/FlashMessage";
+import { useContext, useState } from "react";
+import { TokenContext } from "../../context/TokenContext";
+import { useNavigation } from "@react-navigation/native";
+import { apiCall } from "../../utils/apicall";
+import { storeLocalData } from "../../utils/LocalStorage";
 
 // ...existing code...
 GoogleSignin.configure({
@@ -20,12 +29,84 @@ GoogleSignin.configure({
 });
 
 export const GoogleSignInButton = () => {
+
+  const {setUserDetails, setSessionToken} = useContext(TokenContext);
+  const [providerUserId, setProviderUserId] = useState();
+  const [email, setEmail] = useState();
+  const navigation = useNavigation();
+
+  const socialSignIn = async () => {
+      try {
+        // setLoading(true);
+        const request = {
+          provider: "google",
+          providerUserId: providerUserId,
+          email: email  
+        };
+        const res = await apiCall('POST', SOCIAL_LOGIN, request);
+        if (res.statusCode === 200) {
+          // setLoading(false);
+          await storeLocalData(SESSION_TOKEN, res.data.authToken);
+          setSessionToken(res.data.authToken);
+          setUserDetails(res.data);
+          
+          navigation.navigate(ROUTE_BOTTOM_NAVIGATION_HOST);
+        } else if (res.statusCode === 400) {
+          // setLoading(false);
+          ErrorMessage(res.message);
+        }
+      } catch (error) {
+        // setLoading(false);
+        console.log(error);
+      }
+    };
+
+  const GoogleSignIn = async (): Promise<User | null> => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      if (isSuccessResponse(response)) {
+        const user = response.data.user;
+         console.log('User Info:', user);
+        setProviderUserId(user?.id);
+        setEmail(user?.email);
+        socialSignIn();
+        return response.data as User;
+      } else {
+        // sign in was cancelled by user
+        ErrorMessage(response.data);
+        return null;
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred during Google Sign-In');
+      if (isErrorWithCode(error)) {
+        switch (error.code) {
+          case statusCodes.IN_PROGRESS:
+            // operation (eg. sign in) already in progress
+            ErrorMessage("An error occurred during Google Sign-In!");
+            break;
+          case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+            // Android only, play services not available or outdated
+            ErrorMessage("An error occurred during Google Sign-In!");
+            break;
+          default:
+          // some other error happened
+          ErrorMessage("An error occurred during Google Sign-In!");
+        }
+      } else {
+        // an error that's not related to google sign in occurred
+        ErrorMessage("An error occurred during Google Sign-In!");
+      }
+      return null;
+    }
+  };
+  
   return (
     <View>
-        <TouchableOpacity
-            style={styles.socialLoginButton}
-            onPress={() => GoogleSignIn()}
-            disabled={false}
+        <TouchableOpacity 
+            style={styles.socialLoginButton} 
+            onPress={() => GoogleSignIn()} 
+            disabled={false} 
         >
         <GoogleIcon />
         <Text style={styles.buttonText}>Continue with Google</Text>
@@ -33,6 +114,8 @@ export const GoogleSignInButton = () => {
     </View>
   )
 }
+
+
 
 export default GoogleSignInButton
 
