@@ -54,6 +54,9 @@ export const CHOOSE_INTERESTS = '/user/chooseInterests';
 export const SEND_OTP_FOR_LOGIN = '/user/SendOtpForlogin';
 export const VERIFY_LOGIN_OTP = '/user/verifyLoginOtp';
 
+//Social Sign-In Endpoints
+export const SOCIAL_LOGIN = '/user/socialLogin';
+
 export const UPLOAD_PICTURE = '/user/uploadPicture';
 
 export const GET_INTERESTS = '/interests';
@@ -65,6 +68,9 @@ export const THRO_USER_ACTION = '/throEvents/userAction'; //
 export const THRO_CREATOR_ACTION = '/throEvents/creatorAction'; //
 
 export const GET_PROFILE = '/user/profile';
+
+
+// Google Sign-In Client IDs  
 
 export const GOOGLE_SIGN_IN_WEB_CLIENT_ID = "815001829271-dl7ugkitf8uk2t95m0urn2hnkgmpmpj6.apps.googleusercontent.com";
 export const GOOGLE_SIGN_IN_IOS_CLIENT_ID = "815001829271-lc26t0mk631klf48876t76241au2isni.apps.googleusercontent.com";

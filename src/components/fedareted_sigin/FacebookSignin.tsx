@@ -1,10 +1,49 @@
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { AccessToken, GraphRequest, GraphRequestManager, Settings } from 'react-native-fbsdk-next';
 import FacebookIcon from '../../assets/svgs/FacebookIcon';
-const { LoginManager } = require('react-native-fbsdk-next');
+import { ROUTE_BOTTOM_NAVIGATION_HOST, ROUTE_VERIFY_OTP, SESSION_TOKEN, SOCIAL_LOGIN } from '../../utils/Constants';
+import { apiCall } from '../../utils/apicall';
+import { useNavigation } from '@react-navigation/native';
+import { ErrorMessage } from '../../utils/FlashMessage';
+import { TokenContext } from '../../context/TokenContext';
+import { storeLocalData } from '../../utils/LocalStorage';
 
 export const FacebookSignin = () => {
+
+  const { LoginManager } = require('react-native-fbsdk-next');
+  const {setUserDetails, setSessionToken} = useContext(TokenContext);
+  const [providerUserId, setProviderUserId] = useState();
+  const [email, setEmail] = useState();
+  const navigation = useNavigation();
+
+  const socialSignIn = async () => {
+        
+      try {
+        // setLoading(true);
+        const request = {
+          provider: "facebook",
+          providerUserId: providerUserId,
+          email: email  
+        };
+        const res = await apiCall('POST', SOCIAL_LOGIN, request);
+        if (res.statusCode === 200) {
+          // setLoading(false);
+          await storeLocalData(SESSION_TOKEN, res.data.authToken);
+          setSessionToken(res.data.authToken);
+          setUserDetails(res.data);
+          
+          navigation.navigate(ROUTE_BOTTOM_NAVIGATION_HOST);
+        } else if (res.statusCode === 400) {
+          // setLoading(false);
+          ErrorMessage(res.message);
+        }
+      } catch (error) {
+        // setLoading(false);
+        console.log(error);
+      }
+    };
+
   return (
   <View>
     {/* Custom Facebook login button with an icon */}
@@ -32,8 +71,10 @@ export const FacebookSignin = () => {
               console.log(error);
               Alert.alert('Error fetching data: ' + error.toString());
             } else {
-              console.log(result);
-              Alert.alert('Success fetching data: ' + JSON.stringify(result));
+              console.log("Success:",result)
+              setProviderUserId(result.id);
+              setEmail(result.email);
+              socialSignIn();
             }
           };
 
