@@ -1,6 +1,7 @@
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { LoginButton, AccessToken, GraphRequest, GraphRequestManager, Settings } from 'react-native-fbsdk-next';
+import { AccessToken, GraphRequest, GraphRequestManager, Settings } from 'react-native-fbsdk-next';
+import FacebookIcon from '../../assets/svgs/FacebookIcon';
 const { LoginManager } = require('react-native-fbsdk-next');
 
 export const FacebookSignin = () => {
@@ -8,15 +9,7 @@ export const FacebookSignin = () => {
   <View>
     {/* Custom Facebook login button with an icon */}
     <TouchableOpacity
-      style={{
-        width:  '100%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#1877F2',
-        paddingVertical: 10,
-        paddingHorizontal: 14,
-        borderRadius: 6,
-      }}
+      style={styles.socialLoginButton}
       onPress={async () => {
         try {
           const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
@@ -63,12 +56,8 @@ export const FacebookSignin = () => {
         }
       }}
     >
-      <Image
-        source={{ uri: 'https://www.facebook.com/images/fb_icon_325x325.png' }}
-        style={{ width: 20, height: 20, marginRight: 10, borderRadius: 3 }}
-        resizeMode="cover"
-      />
-      <Text style={{ color: 'white', fontWeight: '600' }}>Continue with Facebook</Text>
+      <FacebookIcon />
+      <Text style={styles.buttonText}>Continue with Facebook</Text>
     </TouchableOpacity>
   </View>
   )
@@ -76,4 +65,14 @@ export const FacebookSignin = () => {
 
 export default FacebookSignin
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+
+  socialLoginButton: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  buttonText: { color: 'black', fontWeight: '600', marginStart:15, width: '60%' }
+})

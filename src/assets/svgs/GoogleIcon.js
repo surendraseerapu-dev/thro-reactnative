@@ -6,8 +6,8 @@ export default GoogleIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
       xmlSpace="preserve"
       id="Capa_1"
-      width="25"
-      height="25"
+      width="30"
+      height="30"
       version="1.1"
       viewBox="0 0 150 150">
       <Path

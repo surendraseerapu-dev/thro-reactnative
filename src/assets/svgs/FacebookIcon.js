@@ -4,8 +4,8 @@ export default FacebookIcon = () => {
   return (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
-      width="25"
-      height="25"
+      width="30"
+      height="30"
       viewBox="0 0 48 48">
       <Path fill="#039be5" d="M24 5a19 19 0 1 0 0 38 19 19 0 1 0 0-38"></Path>
       <Path
