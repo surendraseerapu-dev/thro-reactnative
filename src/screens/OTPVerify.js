@@ -22,7 +22,8 @@ import {apiCall} from '../utils/apicall';
 
 export default SignIn = ({route}) => {
   const {from} = route.params;
-  const {mobileNo} = route.params;
+  const {test_OTP} = route.params;
+  const {email} = route.params;
   const [otp, setOtp] = useState('');
   const [focus, setFocus] = useState(false);
   const [fcmToken, setFcmToken] = useState('');
@@ -58,14 +59,8 @@ export default SignIn = ({route}) => {
     }
     try {
       setLoading(true);
-      const loginReques = {
-        /*  devicetype: Platform.OS,
-        devicetoken: fcmToken, */
-        mobileNo: mobileNo,
-        otp: otp,
-      };
       const request = {
-        mobileNo: mobileNo,
+        email: email,
         otp: otp,
         type:
           from == 'JoinUs'
@@ -89,12 +84,10 @@ export default SignIn = ({route}) => {
           await storeLocalData(USER_SESSION_FOR_SIGNUP, res.data.authToken);
           if (res.data.interests.length == 0 && res.data.userName.length == 0) {
             navigation.navigate(ROUTE_PERSONAL_DETAILS, {
-              mobileNo: mobileNo,
               authToken: res.data.authToken,
             });
           } else {
             navigation.navigate(ROUTE_CHOOSE_INTERESTS, {
-              mobileNo: mobileNo,
               authToken: res.data.authToken,
             });
           }
@@ -102,31 +95,31 @@ export default SignIn = ({route}) => {
           setLoading(false);
           ErrorMessage(res.message);
         }
-      } else if (from == 'SignIn') {
-        const res = await apiCall(
-          'POST',
-          VERIFY_LOGIN_OTP,
-          loginReques,
-          null,
-          false,
-          null,
-          Platform.OS,
-          fcmToken,
-        );
-        if (res.statusCode == 200) {
-          setLoading(false);
+      // } else if (from == 'SignIn') {
+      //   const res = await apiCall(
+      //     'POST',
+      //     VERIFY_LOGIN_OTP,
+      //     loginReques,
+      //     null,
+      //     false,
+      //     null,
+      //     Platform.OS,
+      //     fcmToken,
+      //   );
+      //   if (res.statusCode == 200) {
+      //     setLoading(false);
 
-          console.log('kyaAayaHai', JSON.stringify(res));
-          await storeLocalData(SESSION_TOKEN, res.data.authToken);
-          setSessionToken(res.data.authToken);
-          setUserDetails(res.data);
+      //     console.log('kyaAayaHai', JSON.stringify(res));
+      //     await storeLocalData(SESSION_TOKEN, res.data.authToken);
+      //     setSessionToken(res.data.authToken);
+      //     setUserDetails(res.data);
 
-          navigation.navigate(ROUTE_BOTTOM_NAVIGATION_HOST);
-        } else if (res.statusCode == 400) {
-          setLoading(false);
-          ErrorMessage(res.message);
-        }
-      } else if (from == 'ForgotPassword') {
+      //     navigation.navigate(ROUTE_BOTTOM_NAVIGATION_HOST);
+      //   } else if (res.statusCode == 400) {
+      //     setLoading(false);
+      //     ErrorMessage(res.message);
+      //   }
+      // } else if (from == 'ForgotPassword') {
       }
     } catch (error) {
       setLoading(false);
@@ -157,7 +150,7 @@ export default SignIn = ({route}) => {
           fontSize: 15,
           textAlign: 'center',
         }}>
-        Please enter the 6-digits OTP sent to your number: +91-{mobileNo}
+        Please enter the 6-digits {test_OTP} sent to your email: {email}
       </Text>
 
       <OTPTextView

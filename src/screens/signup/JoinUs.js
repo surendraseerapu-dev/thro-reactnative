@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useState} from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Button,
   SafeAreaView,
@@ -6,14 +6,15 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  StyleSheet
 } from 'react-native';
 import CheckBox from 'react-native-check-box';
 import AppleIcon from '../../assets/svgs/AppleIcon';
 import FacebookIcon from '../../assets/svgs/FacebookIcon';
 import GoogleIcon from '../../assets/svgs/GoogleIcon';
-import {FilledButton} from '../../components/FilledButton';
-import {black, grey, primaryColor, red} from '../../theme/Colors';
-import {useNavigation} from '@react-navigation/native';
+import { FilledButton } from '../../components/FilledButton';
+import { black, grey, primaryColor, red, headingColor } from '../../theme/Colors';
+import { useNavigation } from '@react-navigation/native';
 import {
   APIServicePOST,
   APIServicePOSTWithSession,
@@ -21,22 +22,30 @@ import {
 import {
   ROUTE_VERIFY_OTP,
   ROUTE_WEBVIEW,
-  SEND_OTP_FOR_SIGNUP,
+  EMAIL_SIGNUP,
   VERIFY_OTP,
 } from '../../utils/Constants';
-import {showMessage} from 'react-native-flash-message';
-import {ErrorMessage} from '../../utils/FlashMessage';
-import {InputField} from '../../components/InputField';
+import { showMessage } from 'react-native-flash-message';
+import { ErrorMessage } from '../../utils/FlashMessage';
+import { InputField } from '../../components/InputField';
 import OTPVerify from '../OTPVerify';
 import ActivityIndicatorComponent from '../../utils/ActivityIndicator';
-import {apiCall} from '../../utils/apicall';
-//import BottomSheet from '@gorhom/bottom-sheet';
+import { apiCall } from '../../utils/apicall';
+import EyeIcon from '../../assets/svgs/EyeIcon'; // You need to import your eye icon here
+import EyeOffIcon from '../../assets/svgs/EyeOffIcon'; // You need to import your eye-off icon here
+import { validateEmail, validatePassword, validateConfirmPassword } from '../../utils/DateUtils';
 
 export default JoinUs = () => {
   const [tncCheck, setTncCheck] = useState(true);
   const [focus, setFocus] = useState(false);
-  const [mobileNo, setMobileNo] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [email, setEmail] = useState('');
+  const [errorEmail, setErrorEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorPassword, setErrorPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [errorConfirmPassword, setErrorConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
@@ -50,30 +59,47 @@ export default JoinUs = () => {
 
   /*   useEffect(() => {}, []); */
 
-  const Submit = async () => {
-    if (mobileNo.length != 10) {
-      ErrorMessage('Enter 10 digit mobile number');
-      return;
+  const validateForm = () => {
+    if (!validateEmail(email)) {
+      setErrorEmail('Invalid email format');
     }
 
+    if (!validatePassword(password)) {
+      setErrorPassword('Password must be 6-10 characters long, include uppercase, lowercase, number, and special character');
+    }
+
+    if (!validateConfirmPassword(confirmPassword, password)) {
+      setErrorConfirmPassword('Passwords do not match!');
+    }
+
+    if (validateEmail(email) && validatePassword(password) && validateConfirmPassword(confirmPassword, password)) {
+      Submit();
+    }
+  }
+
+  const Submit = async () => {
     try {
       setLoading(true);
       const request = {
-        mobileNo: mobileNo,
+        email: email,
+        password: password,
       };
       const res = await apiCall(
         'POST',
-        SEND_OTP_FOR_SIGNUP,
+        EMAIL_SIGNUP,
         request,
         null,
         null,
         null,
       );
+      console.log('Signup Response:', res);
       if (res.statusCode == 200) {
         setLoading(false);
+        const response = res.data;
         navigation.navigate(ROUTE_VERIFY_OTP, {
           from: 'JoinUs',
-          mobileNo: mobileNo,
+          email: email,
+          test_OTP: response.otp,
         });
       } else if (res.statusCode == 400) {
         setLoading(false);
@@ -85,197 +111,273 @@ export default JoinUs = () => {
     }
   };
 
+  useEffect(() => {
+    setErrorEmail('');
+  }, [email]);
+
+  useEffect(() => {
+    setErrorPassword('');
+  }, [password]);
+
+  useEffect(() => {
+    setErrorConfirmPassword('');
+  }, [confirmPassword]);
+
+  useEffect(() => {
+    setErrorEmail('');
+    setErrorPassword('');
+    setErrorConfirmPassword('');
+  }, []);
+
   return (
-    <SafeAreaView style={{height: '100%', marginHorizontal: 30}}>
+    <SafeAreaView style={styles.container}>
       <ActivityIndicatorComponent text="Signing Up..." visible={loading} />
-      <Text
-        style={{
-          marginTop: '35%',
-          alignSelf: 'center',
-          color: black,
-          fontFamily: 'Nunito-ExtraBold',
-          fontSize: 30,
-        }}>
-        Join Us
-      </Text>
-
-      <Text
-        style={{
-          marginTop: 10,
-          alignSelf: 'center',
-          color: grey,
-          fontFamily: 'Nunito-Regular',
-          fontSize: 15,
-        }}>
-        Hey! Can we get your number please?
-      </Text>
-
-      <InputField
-        style={{marginTop: '30%'}}
-        heading={'Mobile No'}
-        value={mobileNo}
-        maxLength={10}
-        inputMode={'numeric'}
-        onBlur={val => {
-          setFocus(false);
-        }}
-        onFocus={val => {
-          setFocus(true);
-        }}
-        onChangeText={val => setMobileNo(val)}
-      />
-
-      {error && (
+      <View>
         <Text
-          style={{
-            marginTop: '10',
-            color: red,
-            fontFamily: 'Nunito-Regular',
-            fontSize: 15,
-          }}>
-          {' '}
-          {errorMsg}{' '}
+          style={styles.heading}>
+          Join Us
         </Text>
-      )}
-      <View style={{flexDirection: 'row', marginTop: 10, alignItems: 'center'}}>
-        <CheckBox
-          isChecked={tncCheck}
-          onClick={() => {
-            setTncCheck(!tncCheck);
+
+        <Text
+          style={styles.subHeading}>
+          Hey! Can we get your email please?
+        </Text>
+
+        <InputField
+          style={{ marginTop: '10%' }}
+          heading={'Email'}
+          value={email}
+          onBlur={val => {
+            setFocus(false);
           }}
-          checkBoxColor={primaryColor}
-          checkedCheckBoxColor={primaryColor}
-          uncheckedCheckBoxColor={primaryColor}
+          onFocus={val => {
+            setFocus(true);
+          }}
+          onChangeText={val => setEmail(val)}
         />
 
-        <Text
-          style={{
-            marginStart: 10,
-            color: grey,
-            fontFamily: 'Nunito-Regular',
-            fontSize: 15,
-          }}>
-          I read and accept
-        </Text>
-
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate(ROUTE_WEBVIEW);
-          }}>
+        {errorEmail && (
           <Text
-            style={{
-              marginStart: 5,
-              color: primaryColor,
-              fontFamily: 'Nunito-Regular',
-              fontSize: 15,
-            }}>
-            Terms &amp; Conditions
+            style={styles.errorText}>
+            {errorEmail}
           </Text>
-        </TouchableOpacity>
-      </View>
+        )}
 
-      {!focus && (
-        <View style={{width: '100%', position: 'absolute', bottom: '5%'}}>
+        <View style={styles.passwordInputFieldContainer}>
+          <Text
+            style={styles.passwordTextStyle}>
+            Password
+          </Text>
+          <View
+            style={styles.passwpordInputFieldView}>
+            <TextInput
+              style={styles.passwordInputFieldStyle}
+              value={password}
+              maxLength={10}
+              secureTextEntry={!showPassword} // Toggle password visibility
+              onBlur={() => setFocus(false)}
+              onFocus={() => setFocus(true)}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+              {!showPassword ? (
+                <EyeOffIcon width={24} height={24} color={primaryColor} />
+              ) : (
+                <EyeIcon width={24} height={24} color={primaryColor} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {errorPassword && (
+          <Text
+            style={styles.errorText}>
+            {errorPassword}
+          </Text>
+        )}
+
+        <View style={styles.passwordInputFieldContainer}>
+          <Text
+            style={styles.passwordTextStyle}>
+            Confirm Password
+          </Text>
+          <View
+            style={styles.passwpordInputFieldView}>
+            <TextInput
+              style={styles.passwordInputFieldStyle}
+              value={confirmPassword}
+              maxLength={10}
+              secureTextEntry={!showConfirmPassword} // Toggle password visibility
+              onBlur={() => setFocus(false)}
+              onFocus={() => setFocus(true)}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+              {!showConfirmPassword ? (
+                <EyeOffIcon width={24} height={24} color={primaryColor} />
+              ) : (
+                <EyeIcon width={24} height={24} color={primaryColor} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {errorConfirmPassword && (
+          <Text
+            style={styles.errorText}>
+            {errorConfirmPassword}
+          </Text>
+        )}
+
+        <View style={styles.termsAndConditionsContainer}>
+          <CheckBox
+            isChecked={tncCheck}
+            onClick={() => {
+              setTncCheck(!tncCheck);
+            }}
+            checkBoxColor={primaryColor}
+            checkedCheckBoxColor={primaryColor}
+            uncheckedCheckBoxColor={primaryColor}
+          />
+
+          <Text
+            style={styles.termsSubText}>
+            I read and accept
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate(ROUTE_WEBVIEW);
+            }}>
+            <Text
+              style={styles.termsMainText}>
+              Terms &amp; Conditions
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.bottomView}>
           <FilledButton
             onPress={() => {
-              Submit();
+              validateForm();
             }}
             lable={'Sign Up'}
           />
 
-          <Text
-            style={{
-              marginVertical: 20,
-              color: grey,
-              fontFamily: 'Nunito-Regular',
-              fontSize: 15,
-              alignSelf: 'center',
-            }}>
-            or
-          </Text>
-
-          {/*      <Button
-            title="Open Bottom Sheet"
-            onPress={() => bottomSheetRef.current?.expand()}
-          />
-
-          <BottomSheet ref={bottomSheetRef} index={0} snapPoints={snapPoints}>
-            <View>
-              <Text> Hello, I am a Bottom Sheet! </Text>
-            </View>
-          </BottomSheet> */}
-
-          <TouchableOpacity
-            style={{
-              borderColor: primaryColor,
-              flexDirection: 'row',
-              height: 50,
-              borderRadius: 30,
-              borderWidth: 2,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <Text
-              style={{
-                flex: 1,
-                color: primaryColor,
-                fontFamily: 'Nunito-ExtraBold',
-                fontSize: 17,
-                textAlign: 'right',
-                marginEnd: 5,
-              }}>
-              Sign Up with
-            </Text>
-
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-              }}>
-              <View style={{marginHorizontal: 5}}>
-                <AppleIcon />
-              </View>
-              <View style={{marginHorizontal: 5}}>
-                <FacebookIcon />
-              </View>
-              <View style={{marginHorizontal: 5}}>
-                <GoogleIcon />
-              </View>
-            </View>
-          </TouchableOpacity>
-
           <View
-            style={{
-              flexDirection: 'row',
-              marginTop: 10,
-              alignItems: 'center',
-              alignSelf: 'center',
-            }}>
+            style={styles.alreadyMemberContainer}>
             <Text
-              style={{
-                marginStart: 10,
-                color: grey,
-                fontFamily: 'Nunito-Regular',
-                fontSize: 15,
-              }}>
+              style={styles.alreadyMemberText}>
               already a member?
             </Text>
 
-            <TouchableOpacity /* onPress={{}} */>
+            <TouchableOpacity>
               <Text
-                style={{
-                  marginStart: 5,
-                  color: primaryColor,
-                  fontFamily: 'Nunito-Regular',
-                  fontSize: 15,
-                }}>
+                style={styles.alreadyMemberLoginText}>
                 Log In
               </Text>
             </TouchableOpacity>
           </View>
         </View>
-      )}
+      </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+
+  container: {
+    flex: 1,
+    height: '100%',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white'
+  },
+
+  heading: {
+    alignSelf: 'center',
+    color: black,
+    fontFamily: 'Nunito-ExtraBold',
+    fontSize: 30,
+  },
+
+  subHeading: {
+    marginTop: 10,
+    alignSelf: 'center',
+    color: grey,
+    fontFamily: 'Nunito-Regular',
+    fontSize: 15,
+  },
+
+  errorText: {
+    marginTop: '10',
+    color: red,
+    fontFamily: 'Nunito-Regular',
+    fontSize: 15,
+  },
+
+  passwordInputFieldContainer: {
+    marginTop: 15
+  },
+
+  passwordTextStyle: {
+    fontSize: 15,
+    fontFamily: 'Nunito-Bold',
+    color: headingColor,
+  },
+
+  passwpordInputFieldView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: grey,
+  },
+
+  passwordInputFieldStyle: { flex: 1, paddingVertical: 10, fontSize: 16 },
+
+
+  termsAndConditionsContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    alignItems: 'center'
+  },
+
+  termsSubText: {
+    marginStart: 10,
+    color: grey,
+    fontFamily: 'Nunito-Regular',
+    fontSize: 15,
+  },
+
+  termsMainText: {
+    marginStart: 5,
+    color: primaryColor,
+    fontFamily: 'Nunito-Regular',
+    fontSize: 15,
+  },
+
+  bottomView: { marginTop: '20%' },
+
+  alreadyMemberContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+
+  alreadyMemberText: {
+    marginStart: 10,
+    color: grey,
+    fontFamily: 'Nunito-Regular',
+    fontSize: 15,
+  },
+
+  alreadyMemberLoginText: {
+    marginStart: 5,
+    color: primaryColor,
+    fontFamily: 'Nunito-Regular',
+    fontSize: 15,
+  }
+
+})

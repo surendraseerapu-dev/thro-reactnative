@@ -54,8 +54,14 @@ export const CHOOSE_INTERESTS = '/user/chooseInterests';
 export const SEND_OTP_FOR_LOGIN = '/user/SendOtpForlogin';
 export const VERIFY_LOGIN_OTP = '/user/verifyLoginOtp';
 
+//Email Sign-In Endpoint
+export const EMAIL_SIGNIN = 'user/emailSignin';
+
 //Social Sign-In Endpoints
 export const SOCIAL_LOGIN = '/user/socialLogin';
+
+//Signup API
+export const EMAIL_SIGNUP = '/user/emailSignup';
 
 export const UPLOAD_PICTURE = '/user/uploadPicture';
 
