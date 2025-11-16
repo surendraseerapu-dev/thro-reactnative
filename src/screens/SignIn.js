@@ -8,7 +8,6 @@ import {
   StyleSheet
 } from 'react-native';
 import { black, grey, headingColor, primaryColor, red } from '../theme/Colors';
-import { useNavigation } from '@react-navigation/native';
 import { ErrorMessage } from '../utils/FlashMessage';
 import {
   ROUTE_JOIN_US,
@@ -17,9 +16,7 @@ import {
   SESSION_TOKEN,
 } from '../utils/Constants';
 
-import {
-  storeLocalData
-} from '../utils/Constants';
+import { storeLocalData } from "../utils/LocalStorage";
 import { InputField } from '../components/InputField';
 import { apiCall } from '../utils/apicall';
 import ActivityIndicatorComponent from '../utils/ActivityIndicator';
@@ -33,7 +30,7 @@ import { TokenContext } from '../context/TokenContext';
 import { FacebookSignin } from '../components/fedareted_sigin/FacebookSignin';
 import { GoogleSignInButton } from '../components/fedareted_sigin/GoogleSignInButton';
 
-export default SignIn = () => {
+export default SignIn = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [errorEmail, setErrorEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,8 +39,6 @@ export default SignIn = () => {
   const [focus, setFocus] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setUserDetails, setSessionToken } = useContext(TokenContext);
-
-  const navigation = useNavigation();
 
   const validateForm = () => {
     if (!validateEmail(email)) {
@@ -72,7 +67,7 @@ export default SignIn = () => {
         await storeLocalData(SESSION_TOKEN, res.data.authToken);
         setSessionToken(res.data.authToken);
         setUserDetails(res.data);
-        navigation.navigate(ROUTE_BOTTOM_NAVIGATION_HOST);
+        navigation.replace(ROUTE_BOTTOM_NAVIGATION_HOST);
       } else if (res.statusCode === 400) {
         setLoading(false);
         ErrorMessage(res.message);
@@ -212,11 +207,15 @@ export default SignIn = () => {
 
       <View style={{ width: '80%', marginTop: '20%', alignItems: 'center' }}>
         <View style={styles.socialLoginButton}>
-          <FacebookSignin />
+          <FacebookSignin 
+          navigation={navigation}
+          />
         </View>
 
         <View style={[styles.socialLoginButton, { marginTop: 15 }]}>
-          <GoogleSignInButton />
+          <GoogleSignInButton 
+          navigation={navigation}
+          />
         </View>
       </View>
 
