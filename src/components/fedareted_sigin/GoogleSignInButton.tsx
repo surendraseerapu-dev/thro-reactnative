@@ -12,7 +12,6 @@ import GoogleIcon from "../../assets/svgs/GoogleIcon";
 import { ErrorMessage } from "../../utils/FlashMessage";
 import { useContext, useState } from "react";
 import { TokenContext } from "../../context/TokenContext";
-import { useNavigation } from "@react-navigation/native";
 import { apiCall } from "../../utils/apicall";
 import { storeLocalData } from "../../utils/LocalStorage";
 
@@ -28,35 +27,29 @@ GoogleSignin.configure({
   iosClientId: GOOGLE_SIGN_IN_IOS_CLIENT_ID // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
 });
 
-export const GoogleSignInButton = () => {
+export const GoogleSignInButton = ({navigation}) => {
 
   const {setUserDetails, setSessionToken} = useContext(TokenContext);
-  const [providerUserId, setProviderUserId] = useState();
-  const [email, setEmail] = useState();
-  const navigation = useNavigation();
 
-  const socialSignIn = async () => {
+  const socialSignIn = async (user?: { id: string; name: string | null; email: string; photo: string | null; familyName: string | null; givenName: string | null; }) => {
       try {
-        // setLoading(true);
         const request = {
           provider: "google",
-          providerUserId: providerUserId,
-          email: email  
+          providerUserId: user?.id,
+          email: user?.email  
         };
         const res = await apiCall('POST', SOCIAL_LOGIN, request);
         if (res.statusCode === 200) {
-          // setLoading(false);
           await storeLocalData(SESSION_TOKEN, res.data.authToken);
           setSessionToken(res.data.authToken);
           setUserDetails(res.data);
           
-          navigation.navigate(ROUTE_BOTTOM_NAVIGATION_HOST);
+          navigation.replace(ROUTE_BOTTOM_NAVIGATION_HOST);
         } else if (res.statusCode === 400) {
-          // setLoading(false);
           ErrorMessage(res.message);
         }
       } catch (error) {
-        // setLoading(false);
+        ErrorMessage(error)
         console.log(error);
       }
     };
@@ -67,18 +60,15 @@ export const GoogleSignInButton = () => {
       const response = await GoogleSignin.signIn();
       if (isSuccessResponse(response)) {
         const user = response.data.user;
-         console.log('User Info:', user);
-        setProviderUserId(user?.id);
-        setEmail(user?.email);
-        socialSignIn();
+        console.log('User Info:', user);
+        socialSignIn(user);
         return response.data as User;
       } else {
-        // sign in was cancelled by user
         ErrorMessage(response.data);
         return null;
       }
     } catch (error) {
-      Alert.alert('Error', 'An error occurred during Google Sign-In');
+      ErrorMessage('An error occurred during Google Sign-In');
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.IN_PROGRESS:
