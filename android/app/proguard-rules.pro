@@ -8,3 +8,12 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+
+
+-keep class com.google.android.gms.** { *; }
+-keep class com.google.api.client.** { *; }
+-keep class com.google.android.gms.common.api.** { *; }
+-keep class com.google.android.gms.auth.** { *; }
+-dontwarn com.google.android.gms.**
+-keep class com.google.android.gms.auth.api.signin.** { *; }
+

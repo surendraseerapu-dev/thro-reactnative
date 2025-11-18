@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Thro : Be Out There</string>
-    <string name="facebook_app_id">1102181178792141</string>
+    <string name="facebook_app_id">2014055119351761</string>
     <string name="fb_login_protocol_scheme">fb123456789012345</string>
-    <string name="facebook_client_token">31790354918004157461fd70bbc3251f</string>
+    <string name="facebook_client_token">577bd9be3877acd1958062aaca3b8074</string>
 
 </resources>

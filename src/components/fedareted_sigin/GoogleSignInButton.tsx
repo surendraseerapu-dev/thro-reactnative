@@ -43,7 +43,6 @@ export const GoogleSignInButton = ({navigation}) => {
           await storeLocalData(SESSION_TOKEN, res.data.authToken);
           setSessionToken(res.data.authToken);
           setUserDetails(res.data);
-          
           navigation.replace(ROUTE_BOTTOM_NAVIGATION_HOST);
         } else if (res.statusCode === 400) {
           ErrorMessage(res.message);
