@@ -20,7 +20,7 @@ import {
 import MoreIcon from '../../assets/svgs/MoreIcon';
 import {TitleBarHeader} from '../../components/TitleBarHeader';
 import {appStyle} from '../../theme/AppStyle';
-import {black, grey, lightGrey, primaryColor, white} from '../../theme/Colors';
+import {black, grey, lightGrey, primaryColor, primaryOrange, white} from '../../theme/Colors';
 import {TokenContext} from '../../context/TokenContext';
 import BottomSheet from '@gorhom/bottom-sheet';
 import ProfileThroCreated from './ProfileThroCreated';
@@ -131,7 +131,7 @@ const Profile = () => {
 
   const renderActivities = ({item}) => {
     const getActivityStyle = isSelected => ({
-      color: isSelected ? white : primaryColor,
+      color: isSelected ? primaryOrange : primaryTabGrey,
       fontSize: 15,
       paddingTop: 5,
       paddingBottom: 2,
@@ -139,7 +139,7 @@ const Profile = () => {
       fontFamily: 'Nunito-Bold',
       borderWidth: 2,
       borderColor: primaryColor,
-      backgroundColor: isSelected ? primaryColor : white,
+      borderColor: isSelected ? primaryOrange : primaryTabGrey,
       borderRadius: 20,
     });
 
@@ -193,7 +193,7 @@ const Profile = () => {
               style={{
                 width: 100,
                 flex: 1.5,
-                backgroundColor: primaryColor,
+                backgroundColor: primaryOrange,
                 height: 55,
                 alignItems: 'center',
                 flexDirection: 'row',
@@ -285,11 +285,11 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
   },
   tabButtonActive: {
-    borderBottomColor: primaryColor,
+    borderBottomColor: primaryOrange,
   },
   tabActive: {
     fontFamily: 'Nunito-Bold',
-    color: primaryColor,
+    color: primaryOrange,
     fontSize: 14,
   },
   tabInActive: {

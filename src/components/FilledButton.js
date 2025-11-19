@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
-import {primaryColor, white} from '../theme/Colors';
+import {primaryColor, white, primaryOrange} from '../theme/Colors';
 import LinearGradient from 'react-native-linear-gradient';
 
 export const FilledButton = ({
@@ -17,9 +17,9 @@ export const FilledButton = ({
         <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
-          colors={['#9827b5', '#fb975c']}
+          colors={['#F3A683', '#F3A683']}
           style={{
-            backgroundColor: primaryColor,
+            backgroundColor: primaryOrange,
             width: width,
             height: height || 50,
             borderRadius: 30,

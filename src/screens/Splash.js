@@ -9,7 +9,7 @@ import {
   ROUTE_SIGN_IN,
   SESSION_TOKEN,
 } from '../utils/Constants';
-import {primaryColor} from '../theme/Colors';
+import {primaryOrange} from '../theme/Colors';
 import NetworkService from '../utils/NetworkService';
 import {TokenContext} from '../context/TokenContext';
 
@@ -52,20 +52,20 @@ const Splash = () => {
           height: 120,
           aspectRatio: 1.44,
           marginBottom: '20%',
-          tintColor: primaryColor,
+          tintColor: primaryOrange,
         }}
         source={require('../assets/logos/splash_logo.png')}
       />
-      {/* <Image
+      <Image
         style={{
           width: 400,
           height: 260,
           position: 'absolute',
-          tintColor: primaryColor,
+          tintColor: primaryOrange,
           bottom: 10,
         }}
         source={require('../assets/images/splash_image.png')}
-      /> */}
+      />
     </SafeAreaView>
   );
 };

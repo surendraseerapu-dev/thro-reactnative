@@ -14,6 +14,7 @@ import { useContext, useState } from "react";
 import { TokenContext } from "../../context/TokenContext";
 import { apiCall } from "../../utils/apicall";
 import { storeLocalData } from "../../utils/LocalStorage";
+import { primaryOrange } from "../../theme/Colors";
 
 // ...existing code...
 GoogleSignin.configure({
@@ -118,6 +119,6 @@ const styles = StyleSheet.create({
     justifyContent:'center'
   },
 
-  buttonText: { color: 'black', fontWeight: '600', marginStart:15, width: '60%' }
+  buttonText: { color: primaryOrange, fontWeight: '600', marginStart:15, width: '60%' }
 
 })

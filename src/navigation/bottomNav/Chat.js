@@ -11,8 +11,10 @@ import {
 import MoreIcon from '../../assets/svgs/MoreIcon';
 import {TitleBarHeader} from '../../components/TitleBarHeader';
 import {
-  headingColor,
+  headingColor, 
   primaryColor,
+  primaryOrange,
+  primaryTabGrey,
   subHeadingColor,
   white,
 } from '../../theme/Colors';
@@ -33,15 +35,15 @@ const Chat = () => {
   const renderActivities = ({item, index}) => {
     // Helper function to determine style for selected activities
     const getActivityStyle = isSelected => ({
-      color: isSelected ? white : primaryColor,
-      fontSize: 15,
-      paddingTop: 5,
-      paddingBottom: 2,
-      paddingHorizontal: 12,
+      color: isSelected ? primaryOrange : primaryTabGrey,
+      fontSize: 16,
+      paddingTop: 10,
+      paddingBottom: 10,
+      paddingHorizontal: 20,
       fontFamily: 'Nunito-Bold',
       borderWidth: 2,
-      borderColor: primaryColor,
-      backgroundColor: isSelected ? primaryColor : white,
+      borderColor: isSelected ? primaryOrange : primaryTabGrey,
+      backgroundColor: white,
       borderRadius: 20,
     });
 
@@ -111,6 +113,7 @@ const Chat = () => {
           style={styles.activityList}
           renderItem={renderActivities}
           horizontal={true}
+          showsHorizontalScrollIndicator={false}
           ItemSeparatorComponent={<View style={{margin: 5}} />}
           keyExtractor={(item, index) => index.toString()}
           extraData={selectedIndex}

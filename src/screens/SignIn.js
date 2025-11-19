@@ -7,7 +7,7 @@ import {
   View,
   StyleSheet
 } from 'react-native';
-import { black, grey, headingColor, primaryColor, red } from '../theme/Colors';
+import { black, grey, headingColor, primaryColor, red, primaryOrange } from '../theme/Colors';
 import { ErrorMessage } from '../utils/FlashMessage';
 import {
   ROUTE_JOIN_US,
@@ -119,10 +119,12 @@ export default SignIn = ({navigation}) => {
       />
 
       {errorEmail && (
+        <View style={styles.errortextView}>
         <Text
           style={styles.errorText}>
           {errorEmail}
         </Text>
+        </View>
       )}
       <View style={styles.passwordInputFieldContainer}>
         <Text
@@ -151,16 +153,18 @@ export default SignIn = ({navigation}) => {
       </View>
 
       {errorPassword && (
+        <View style={styles.errortextView}>
         <Text
           style={styles.errorText}>
           {errorPassword}
         </Text>
+        </View>
       )}
 
       <View style={styles.forgotPasswordContainer}>
         <Text
           style={{
-            color: primaryColor,
+            color: primaryOrange,
             fontFamily: 'Nunito-Bold',
             fontSize: 15,
           }}>
@@ -194,7 +198,7 @@ export default SignIn = ({navigation}) => {
             <Text
               style={{
                 marginStart: 5,
-                color: primaryColor,
+                color: primaryOrange,
                 fontFamily: 'Nunito-Medium',
                 fontWeight: 500,
                 fontSize: 15,
@@ -273,9 +277,12 @@ const styles = StyleSheet.create({
 
   passwordInputFieldStyle: { flex: 1, paddingVertical: 10, fontSize: 16 },
 
+  errortextView: { width: '80%', flexDirection: 'row' },
+  
   errorText: {
     marginTop: '10',
     color: red,
+    textAlign: 'left',
     fontFamily: 'Nunito-Regular',
     fontSize: 15,
   },
@@ -289,7 +296,7 @@ const styles = StyleSheet.create({
 
   socialLoginButton: {
     width: '100%',
-    borderColor: primaryColor,
+    borderColor: primaryOrange,
     flexDirection: 'row',
     height: 40,
     borderRadius: 30,

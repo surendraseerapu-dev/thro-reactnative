@@ -7,7 +7,7 @@ import Chat from './Chat';
 import CreateThro from './createThro/CreateThro';
 import Activity from './Activity';
 import Profile from './Profile';
-import {grey, primaryColor} from '../../theme/Colors';
+import {grey, primaryOrange} from '../../theme/Colors';
 import NavHomeIcon from '../../assets/svgs/NavHomeActiveIcon';
 import NavHomeActiveIcon from '../../assets/svgs/NavHomeActiveIcon';
 import NavHomeInactiveIcon from '../../assets/svgs/NavHomeInactiveIcon';
@@ -39,7 +39,7 @@ export default function BottomNavHost() {
       screenOptions={{
         tabBarStyle: {height: 60},
         tabBarLabelStyle: {marginBottom: 5, fontSize: 12.5, fontWeight: '500'},
-        tabBarActiveTintColor: primaryColor,
+        tabBarActiveTintColor: primaryOrange,
         tabBarInactiveTintColor: grey,
         headerShown: false,
       }}>
