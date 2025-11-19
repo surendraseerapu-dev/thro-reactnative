@@ -13,7 +13,7 @@ import AppleIcon from '../../assets/svgs/AppleIcon';
 import FacebookIcon from '../../assets/svgs/FacebookIcon';
 import GoogleIcon from '../../assets/svgs/GoogleIcon';
 import { FilledButton } from '../../components/FilledButton';
-import { black, grey, primaryColor, red, headingColor } from '../../theme/Colors';
+import { black, grey, primaryColor, red, headingColor, primaryOrange } from '../../theme/Colors';
 import { useNavigation } from '@react-navigation/native';
 import {
   APIServicePOST,
@@ -235,9 +235,9 @@ export default JoinUs = () => {
             onClick={() => {
               setTncCheck(!tncCheck);
             }}
-            checkBoxColor={primaryColor}
-            checkedCheckBoxColor={primaryColor}
-            uncheckedCheckBoxColor={primaryColor}
+            checkBoxColor={primaryOrange}
+            checkedCheckBoxColor={primaryOrange}
+            uncheckedCheckBoxColor={primaryOrange}
           />
 
           <Text
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
 
   termsMainText: {
     marginStart: 5,
-    color: primaryColor,
+    color: primaryOrange,
     fontFamily: 'Nunito-Regular',
     fontSize: 15,
   },
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
 
   alreadyMemberLoginText: {
     marginStart: 5,
-    color: primaryColor,
+    color: primaryOrange,
     fontFamily: 'Nunito-Regular',
     fontSize: 15,
   }

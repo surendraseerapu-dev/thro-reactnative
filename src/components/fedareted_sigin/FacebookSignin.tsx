@@ -7,6 +7,7 @@ import { apiCall } from '../../utils/apicall';
 import { ErrorMessage } from '../../utils/FlashMessage';
 import { TokenContext } from '../../context/TokenContext';
 import { storeLocalData } from '../../utils/LocalStorage';
+import { primaryOrange } from '../../theme/Colors';
 
 export const FacebookSignin = ({navigation}) => {
 
@@ -103,5 +104,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  buttonText: { color: 'black', fontWeight: '600', marginStart:15, width: '60%' }
+  buttonText: { color: primaryOrange, fontWeight: '600', marginStart:15, width: '60%' }
 })
